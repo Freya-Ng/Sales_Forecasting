@@ -1,6 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import seaborn as sns
 
 
@@ -18,7 +16,7 @@ def plot_sales(df, store_id=1, item_id=1):
     nan_indices = df_2plot[df_2plot["sales"].isna()].index
 
     if len(nan_indices) >= 1:
-        df_2plot = df_2plot.assign(sales=lambda df: df["sales"].fillna(method="ffill"))
+        df_2plot = df_2plot.assign(sales=lambda df: df["sales"].ffill())
         # Draw arrows for NaN values
         nan_dates = df_2plot.loc[nan_indices, "date"]
         nan_sales = df_2plot.loc[nan_indices, "sales"]
@@ -124,8 +122,8 @@ def plot_sales_predictions(
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper center", ncol=2, fontsize=12)
 
-    plt.tight_layout(rect=[0, 0, 1, 0.97])  # Leave space for the legend
     fig.suptitle(
         f"Sales Forecast vs Actual - Store {store_name}", fontsize=16, fontweight="bold"
     )
+    plt.tight_layout(rect=(0, 0, 1, 0.95))  # Leave space for the suptitle and legend
     plt.show()
