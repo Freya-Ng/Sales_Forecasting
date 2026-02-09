@@ -540,6 +540,11 @@ def display_prediction_results(
             if max_date is not None:
                 st.write(f"**Date:** {max_date.strftime('%b %d, %Y')}")
 
+    # Business interpretation
+    display_prediction_interpretation(
+        prediction_value, historical_data, store_col, item_col, store_id, item_id
+    )
+
     # Historical context
     display_historical_context(historical, prediction_inputs["date"], prediction_value)
 
@@ -688,3 +693,54 @@ def display_feature_importance(model, model_features):
         fig.tight_layout()
 
         st.pyplot(fig)
+
+        # Business-friendly explanation
+        top_feature = importance_df.iloc[0]["Feature"]
+        second_feature = importance_df.iloc[1]["Feature"]
+        st.markdown(
+            f"**What this means:** The model relies most heavily on "
+            f"**{top_feature}** and **{second_feature}** to make its prediction. "
+            "To influence future sales, focus on the factors you can control — "
+            "such as promotions, staffing on specific days, and inventory management."
+        )
+
+
+def display_prediction_interpretation(prediction_value, historical_data, store_col,
+                                       item_col, store_id, item_id):
+    """Display a business-friendly interpretation of the prediction"""
+
+    st.subheader("What Does This Prediction Mean?")
+
+    historical = historical_data[
+        (historical_data[store_col] == store_id)
+        & (historical_data[item_col] == item_id)
+    ]
+
+    if "sales" not in historical.columns or historical.empty:
+        return
+
+    avg_sales = historical["sales"].mean()
+    diff_pct = (prediction_value - avg_sales) / avg_sales * 100 if avg_sales > 0 else 0
+
+    if diff_pct > 15:
+        st.success(
+            f"This prediction is **{diff_pct:.1f}% above** the historical average "
+            f"(${avg_sales:,.2f}). This suggests a strong sales day. "
+            "**Ensure you have sufficient stock** to avoid lost sales from stockouts."
+        )
+    elif diff_pct > 0:
+        st.info(
+            f"This prediction is **{diff_pct:.1f}% above** the historical average. "
+            "Sales should be slightly better than usual. Normal inventory levels should suffice."
+        )
+    elif diff_pct > -15:
+        st.info(
+            f"This prediction is **{abs(diff_pct):.1f}% below** the historical average. "
+            "Consider a small promotion or discount to maintain sales volume."
+        )
+    else:
+        st.warning(
+            f"This prediction is **{abs(diff_pct):.1f}% below** the historical average. "
+            "This may be due to seasonal factors or day-of-week patterns. "
+            "**Consider running a targeted promotion** to boost demand on this day."
+        )
