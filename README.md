@@ -88,15 +88,6 @@ cd Sales_Forecasting
 
 ### 2. Set up the environment
 
-**Option A — Conda:**
-
-```bash
-conda env create -f environment.yml
-conda activate sales_forecast
-```
-
-**Option B — pip:**
-
 ```bash
 python -m venv .venv
 
