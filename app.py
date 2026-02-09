@@ -7,6 +7,7 @@ from src.data_loader.loader import (
     load_model,
 )
 from src.ui_builder.dashboard import historical_sales_view
+from src.ui_builder.insights import business_insights_view
 from src.ui_predictor.prediction import sales_prediction_view
 
 # Page configuration
@@ -17,7 +18,8 @@ def main():
     # Sidebar
     st.sidebar.title("Sales Forecasting App")
     page = st.sidebar.selectbox(
-        "Choose a page", ["Historical Sales Analysis", "Sales Prediction"]
+        "Choose a page",
+        ["Historical Sales Analysis", "Business Insights", "Sales Prediction"],
     )
 
     # Load data and model
@@ -28,6 +30,8 @@ def main():
     # Display page based on selection
     if page == "Historical Sales Analysis":
         historical_sales_view(data)
+    elif page == "Business Insights":
+        business_insights_view(data)
     else:
         # Load feature engineered data for prediction
         feature_engineered_data = load_feature_engineered_data()
