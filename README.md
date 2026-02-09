@@ -1,165 +1,151 @@
 # Sales Forecasting with Explainable AI (XAI)
 
-- **Project Type:** Proof of Concept (PoC)
-- **Tech Stack:** Python, LightGBM, SHAP, Optuna, Streamlit
+> End-to-end sales forecasting system combining LightGBM, SHAP explainability, and an interactive Streamlit dashboard with business recommendations.
+
+**Tech Stack:** Python, LightGBM, Prophet, SHAP, Optuna, Streamlit
+
+**[Live Demo](https://your-streamlit-app-link.streamlit.app)** | **[Project Showcase](PROJECT_SHOWCASE.md)** | **[SHAP Analysis Report](docs/shap_analysis_summary_report.md)**
+
+---
 
 ## Overview
 
-- **Sales Forecasting with Explainable AI (XAI)** is a complete end-to-end proof of concept (PoC) that leverages machine learning to forecast store-level sales with transparency and interpretability.
+This project builds a complete sales forecasting pipeline — from raw data to an interactive web app — for 10 retail stores across 2 provinces in Vietnam (Hanoi & Ho Chi Minh City), covering 35 products in 5 categories over 2 years (2016-2017).
 
-- The project combines time series modeling with explainability tools to provide actionable insights, making it easier for business stakeholders to understand and trust the model’s predictions.
-
-- At its core, this project builds a sales forecasting model using **LightGBM**, optimized with **Optuna**, and explained using **SHAP (SHapley Additive exPlanations)**. It culminates in a **Streamlit web application** that allows users to explore historical sales and prediction results by store.
+The system forecasts daily store-item sales using **LightGBM** (optimized with **Optuna**), explains predictions with **SHAP**, and serves everything through a **Streamlit** web application that provides historical analysis, business insights, and interactive predictions.
 
 ## Key Features
 
-- **Data Preprocessing & Cleaning:**
-  Integration of multiple data sources (sales, weather), missing value handling, outlier detection.
+- **Data Pipeline:** Preprocessing, missing value imputation, outlier correction, and weather data integration
+- **Feature Engineering:** 55 features including lag values, rolling statistics (7/14/28-day), EWMA, temporal features, and weather indicators
+- **Baseline Model:** Facebook Prophet with multiplicative seasonality as a time series baseline
+- **Primary Model:** LightGBM regressor with TimeSeriesSplit cross-validation (5 folds)
+- **Hyperparameter Tuning:** Bayesian optimization via Optuna (6 parameters, 20 trials)
+- **Explainability:** SHAP TreeExplainer with global importance, dependency plots, and per-prediction force plots
+- **Interactive App:** 3-page Streamlit dashboard with filters, KPIs, business insights, and a prediction tool
 
-* **Feature Engineering:**
-  Over 50 crafted features including date, lag, rolling stats, and weather-based inputs.
+## Model Performance
 
-* **Time Series Modeling:**
-  Sales forecasting using LightGBM with careful temporal train/test splitting.
+| Model | MAE | RMSE | WAPE |
+|-------|-----|------|------|
+| Prophet (baseline) | 8.90 | 11.49 | 29.14% |
+| LightGBM (base) | 7.71 | 11.88 | 25.26% |
+| LightGBM (Optuna-tuned) | 7.64 | 11.76 | 24.82% |
 
-* **Hyperparameter Tuning:**
-  Efficient model optimization via **Optuna** for enhanced performance.
+## Streamlit App
 
-* **Explainability with SHAP:**
-  Interpretable model predictions with local and global SHAP value analysis.
+The app provides three pages:
 
-* **Interactive Streamlit App:**
-  A web interface (`app.py`) that enables users to explore store-level forecasts and historical trends.
+1. **Historical Sales Analysis** — filterable dashboard with KPIs, sales trends, category/store breakdowns, and auto-generated quick insights
+2. **Business Insights & Recommendations** — performance rankings, seasonal patterns, growth opportunities (store-category heatmap), and prioritized actionable strategies to boost revenue
+3. **Sales Prediction** — interactive tool to predict sales for any store-product-date combination with adjustable factors (weather, promotions, competition, supply chain) and business-friendly interpretation
 
-## Deliverables
-
-- 5 comprehensive notebooks for data processing, feature engineering, modelling and evaluation
-- Trained LightGBM model
-- SHAP explainability visuals - 📄 [SHAP Analysis Summary Report](docs/shap_analysis_summary_report.md)
-- Streamlit app for predictions
+**[Live Demo](https://your-streamlit-app-link.streamlit.app)**
 
 ## Project Structure
 
-```bash
-├── app.py                          # Streamlit web app for user interaction
-├── check_data/
-│   ├── check_data.xlsx             # Excel file for checking prediction
-│   └── prediction_results.csv      # Model prediction output
+```
+Sales_Forecasting/
+├── app.py                                # Streamlit app entry point
 ├── data/
-│   ├── 2016_sales.csv              # Raw sales data for 2016
-│   ├── 2017_sales.csv              # Raw sales data for 2017
-│   ├── feature_engineered_data_55_features.feather
-│   ├── sales_data_preprocessed.csv
-│   ├── weather_data.csv
-│   └── weather_preprocessed.csv
-├── docs/
-│   ├── project_description_poc_phase.md  # Project detail description
-│   └── shap_analysis_summary_report.md   # Quick summary of SHAP results
-├── environment.yml                 # Environment for most systems
-├── environment_macm1.yml           # Environment for Mac M1 chip
-├── requirements.txt                # Nessesary libraries
-├── figures/                        # SHAP plots and EDA visuals
+│   ├── 2016_sales.csv                    # Raw 2016 sales data
+│   ├── 2017_sales.csv                    # Raw 2017 sales data
+│   ├── weather_data.csv                  # Weather data (temperature, humidity, season)
+│   ├── sales_data_preprocessed.csv       # Cleaned sales data
+│   ├── weather_preprocessed.csv          # Cleaned weather data
+│   └── feature_engineered_data_55_features.feather
 ├── models/
-│   ├── feature_stats.json
-│   └── sales_forecast_model.pkl   # Trained model
-├── notebooks/                     # Main work for PoC phase is based on Notebooks
-│   ├── 01_preprocessing.ipynb      # Proprocessing notebook
-│   ├── 02_EDA.ipynb                # EDA notebook
-│   ├── 03_feature_engineering.ipynb   # Feature engineer
-│   ├── 04_modelling.ipynb          # Model training (base line: Prophet and better: Light GBM)
-│   └── 05_explain_model.ipynb      # Explainable AI
-├── src/                            # Modular source code
-│   ├── data_loader/
-│   ├── data_generator/
-│   ├── ui_builder/
-│   ├── ui_predictor/
-│   └── utils/
-└── README.md
+│   ├── sales_forecast_model.pkl          # Trained LightGBM model
+│   └── feature_stats.json               # Feature metadata
+├── notebooks/
+│   ├── 01_preprocessing.ipynb            # Data cleaning & outlier handling
+│   ├── 02_EDA.ipynb                      # Exploratory data analysis
+│   ├── 03_feature_engineering.ipynb      # 55-feature creation pipeline
+│   ├── 04_modelling.ipynb                # Prophet + LightGBM + Optuna tuning
+│   └── 05_explain_model.ipynb            # SHAP explainability analysis
+├── src/
+│   ├── data_generator/                   # Synthetic data generation
+│   ├── data_loader/                      # Data loading with Streamlit caching
+│   ├── ui_builder/                       # Dashboard, insights, and visualization modules
+│   ├── ui_predictor/                     # Prediction interface with business interpretation
+│   └── utils/                            # Plotting and utility functions
+├── docs/
+│   ├── project_description_poc_phase.md
+│   └── shap_analysis_summary_report.md
+├── figures/                              # Generated SHAP and EDA visualizations
+├── requirements.txt
+└── PROJECT_SHOWCASE.md                   # Technical showcase of methods used
 ```
 
-## Installation
+## Getting Started
 
-1. **Clone the Repository**
+### 1. Clone the repository
 
-   ```bash
-   git clone https://github.com/nguyenhads/sales_forecasting_xai.git
-   cd sales_forecasting_xai
-   ```
+```bash
+git clone <your-repo-url>
+cd Sales_Forecasting
+```
 
-2. **Set Up Environment**
+### 2. Set up the environment
 
-- For general systems:
+**Option A — Conda:**
 
-  ```bash
-  conda env create -f environment.yml
-  conda activate sales_forecast
-  ```
+```bash
+conda env create -f environment.yml
+conda activate sales_forecast
+```
 
-- For Mac M1:
+**Option B — pip:**
 
-  ```bash
-  conda env create -f environment_macm1.yml
-  conda activate sales_forecast
-  ```
+```bash
+python -m venv .venv
 
-  _You need to install Anaconda for this setup. If not, please use the below setup instead._
+# macOS/Linux:
+source .venv/bin/activate
+# Windows:
+.venv\Scripts\activate
 
-- Create a virtual environment using pure python
+pip install -r requirements.txt
+```
 
-  ```
-  python -m venv .venv
+### 3. Generate the dataset
 
-  # On macOS/Linux:
-  source .venv/bin/activate
+This creates the raw sales and weather CSV files in the `data/` directory.
 
-  # On Windows:
-  .venv\Scripts\activate
+```bash
+python src/data_generator/data_generator.py
+```
 
-  pip install -r requirements.txt
-  ```
+You can modify parameters in `src/data_generator/data_generator.py` to change the date range, outlier ratio, or missing value ratio.
 
-3. **Run the notebooks**
+### 4. Run the notebooks (sequential)
 
-- After activating virtual enviroments
+```bash
+jupyter lab
+```
 
-  ```bash
-  jupyter lab
-  ```
+Run in order: `01_preprocessing` → `02_EDA` → `03_feature_engineering` → `04_modelling` → `05_explain_model`
 
-4. **Generate your all dataset**
+### 5. Launch the Streamlit app
 
-- If you preferer generating your all dataset, you can change the range of data as well as the outlier and nan values ratio.
-- In this case, modify `src/data_generator/data_generator.py `, and in below `sales_forecasting_xai` folder, run the below command
+```bash
+streamlit run app.py
+```
 
-  ```bash
-  python src/data_generator/data_generator.py
-  ```
-
-5. **Run the Streamlit App**
-   ```bash
-   streamlit run app.py
-   ```
+The app opens at `http://localhost:8501`.
 
 ## How It Works
 
-1. **Data Pipeline**
-   Sales and weather data are preprocessed and merged. Features are engineered and saved for model training.
-
-2. **Model Training**
-   LightGBM is trained using time-aware train/test split. Optuna tunes the model for best performance.
-
-3. **Explainability**
-   SHAP values are calculated and visualized to explain predictions at both global and local levels.
-
-4. **User Interface**
-
-- `app.py` allows users to:
-  - View historical sales
-  - Make a predictions of future sales to properly arrange the resources
+1. **Data Pipeline** — Sales and weather data are cleaned, merged, and validated. Missing values are imputed with mean; outliers are capped using z-score thresholds.
+2. **Feature Engineering** — 55 features are created: lag values (1/7/14/28 days), rolling statistics (mean/min/max/std over 7/14/28 days), EWMA (alpha 0.5 & 0.75), store/item aggregations, temporal features, and one-hot encoded weather indicators.
+3. **Model Training** — LightGBM is trained with TimeSeriesSplit cross-validation. Optuna tunes 6 hyperparameters via Bayesian optimization. Prophet serves as the baseline.
+4. **Explainability** — SHAP TreeExplainer generates global feature importance rankings, dependency plots, and local force plots for individual predictions.
+5. **Web App** — Streamlit serves 3 pages: historical analysis with filters, business insights with actionable recommendations, and an interactive prediction tool.
 
 ## References
 
-- [LightGBM Documentation](https://lightgbm.readthedocs.io/)
-- [SHAP Documentation](https://shap.readthedocs.io/)
-- [Optuna Documentation](https://optuna.org/)
-- [Streamlit](https://streamlit.io/)
+- [LightGBM](https://lightgbm.readthedocs.io/) — Gradient boosting framework
+- [SHAP](https://shap.readthedocs.io/) — Model explainability
+- [Optuna](https://optuna.org/) — Hyperparameter optimization
+- [Prophet](https://facebook.github.io/prophet/) — Time series forecasting
+- [Streamlit](https://streamlit.io/) — Web app framework
