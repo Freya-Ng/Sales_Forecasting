@@ -4,7 +4,7 @@
 
 **Tech Stack:** Python, LightGBM, Prophet, SHAP, Optuna, Streamlit
 
-**[Live Demo](https://your-streamlit-app-link.streamlit.app)** | **[Project Showcase](PROJECT_SHOWCASE.md)** | **[SHAP Analysis Report](docs/shap_analysis_summary_report.md)**
+**[Live Demo](https://saleforecasting.streamlit.app/)** | **[Project Showcase](PROJECT_SHOWCASE.md)** | **[SHAP Analysis Report](docs/shap_analysis_summary_report.md)**
 
 ---
 
@@ -40,7 +40,7 @@ The app provides three pages:
 2. **Business Insights & Recommendations** — performance rankings, seasonal patterns, growth opportunities (store-category heatmap), and prioritized actionable strategies to boost revenue
 3. **Sales Prediction** — interactive tool to predict sales for any store-product-date combination with adjustable factors (weather, promotions, competition, supply chain) and business-friendly interpretation
 
-**[Live Demo](https://your-streamlit-app-link.streamlit.app)**
+**[Live Demo](https://saleforecasting.streamlit.app/)**
 
 ## Project Structure
 
