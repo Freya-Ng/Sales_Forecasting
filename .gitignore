@@ -45,14 +45,13 @@ venv.bak/
 # Environment files
 # environment*.yml
 
-# Data files
-data/*.csv
-data/*.feather
+# Data files (tracked via Git LFS - see .gitattributes)
+# data/*.csv
+# data/*.feather
 data/*.xlsx
 
 # Output and figures
 check_data/
-models/
 *.log
 
 # Streamlit cache
