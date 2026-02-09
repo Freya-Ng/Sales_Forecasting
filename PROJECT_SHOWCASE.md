@@ -18,7 +18,7 @@ The project follows a structured pipeline:
 6. **Explainability** — Apply SHAP to explain predictions at global and individual levels.
 7. **Deployment** — Serve everything through an interactive Streamlit web app with business recommendations.
 
-**[Live Demo](https://your-streamlit-app-link.streamlit.app)**
+**[Live Demo](https://saleforecasting.streamlit.app/)**
 
 ---
 
@@ -121,4 +121,4 @@ The interactive web app provides three pages accessible via sidebar:
 - **Business Insights & Recommendations** — Store/product performance rankings, seasonal analysis, store-category gap heatmap, growth opportunities, and prioritized revenue-boosting strategies
 - **Sales Prediction** — Predict sales for any store-product-date with adjustable weather, promotion, competition, and supply chain factors, plus plain-language interpretation of results
 
-**[Live Demo](https://your-streamlit-app-link.streamlit.app)**
+**[Live Demo](https://saleforecasting.streamlit.app/)**
