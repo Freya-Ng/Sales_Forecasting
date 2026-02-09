@@ -40,6 +40,9 @@ def historical_sales_view(data):
     fig = plot_sales_distribution(filtered_data)
     st.pyplot(fig)
 
+    # Quick Insights callout
+    display_quick_insights(filtered_data)
+
     # Data Table (Expandable)
     with st.expander("View Detailed Sales Data"):
         st.dataframe(
@@ -285,3 +288,61 @@ def display_performance_breakdown(filtered_data):
             # Create bar chart
             fig = plot_store_comparison(filtered_data, store_identifier)
             st.pyplot(fig)
+
+
+def display_quick_insights(filtered_data):
+    """Display quick business insights based on the filtered data"""
+
+    st.header("Quick Insights")
+
+    insights = []
+
+    # Weekend vs weekday insight
+    data_copy = filtered_data.copy()
+    data_copy["is_weekend"] = data_copy["date"].dt.dayofweek >= 5
+    weekend_avg = data_copy[data_copy["is_weekend"]]["sales"].mean()
+    weekday_avg = data_copy[~data_copy["is_weekend"]]["sales"].mean()
+    if weekday_avg > 0:
+        weekend_diff = (weekend_avg - weekday_avg) / weekday_avg * 100
+        if weekend_diff > 5:
+            insights.append(
+                f"Weekend sales are **{weekend_diff:.1f}% higher** than weekdays. "
+                "Consider increasing weekend staffing and stock levels."
+            )
+        elif weekend_diff < -5:
+            insights.append(
+                f"Weekday sales outperform weekends by **{abs(weekend_diff):.1f}%**. "
+                "Weekend promotions could help close this gap."
+            )
+
+    # Top product insight
+    if "item_name" in filtered_data.columns:
+        top_item = filtered_data.groupby("item_name")["sales"].sum().idxmax()
+        top_share = (
+            filtered_data.groupby("item_name")["sales"].sum().max()
+            / filtered_data["sales"].sum()
+            * 100
+        )
+        insights.append(
+            f"**{top_item}** is the top seller, contributing **{top_share:.1f}%** "
+            "of total revenue in this period."
+        )
+
+    # Trend insight
+    daily_sales = filtered_data.groupby("date")["sales"].sum()
+    if len(daily_sales) > 14:
+        recent_avg = daily_sales.tail(7).mean()
+        prior_avg = daily_sales.iloc[-14:-7].mean()
+        if prior_avg > 0:
+            trend_pct = (recent_avg - prior_avg) / prior_avg * 100
+            direction = "up" if trend_pct > 0 else "down"
+            insights.append(
+                f"Sales in the last 7 days are **{direction} {abs(trend_pct):.1f}%** "
+                "compared to the prior week."
+            )
+
+    if insights:
+        for insight in insights:
+            st.info(insight)
+    else:
+        st.info("Select a narrower date range or specific store for more detailed insights.")
